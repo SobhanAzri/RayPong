@@ -1,1 +1,0 @@
-/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/RayPong.dir/link.d CMakeFiles/RayPong.dir/src/raypong.cpp.o CMakeFiles/RayPong.dir/src/Ball/ball.cpp.o CMakeFiles/RayPong.dir/src/Boards/board.cpp.o CMakeFiles/RayPong.dir/src/Boards/playerBoard.cpp.o CMakeFiles/RayPong.dir/src/Boards/cpuBoard.cpp.o -o RayPong  -lraylib
