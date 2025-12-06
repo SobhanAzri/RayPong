@@ -1,6 +1,7 @@
 #include "raylib.h"
 #include "Boards/playerBoard.h"
 #include "Ball/ball.h"
+#include "Boards/cpuBoard.h"
 
 
 #define WINDOW_WIDTH GetMonitorWidth(0)
@@ -12,18 +13,22 @@ void drawField();
 int main() {
     initializeWindow();
 
-    Ball ball({static_cast<float>(WINDOW_WIDTH / 2), static_cast<float>(WINDOW_HEIGHT / 2)},
-              {-10,10}, 15);
+    Vector2 boardScale = {25,120};
+    Vector2 playerPosition = {boardScale.x + 10 , static_cast<float>(WINDOW_HEIGHT / 2) };
+    Vector2 cpuPosition = {(WINDOW_WIDTH - boardScale.x - (boardScale.x  + 10)), static_cast<float>(WINDOW_HEIGHT / 2)};
 
-    Vector2 playerScale = {25,120};
-    Vector2 playerPosition = {playerScale.x + 10 , static_cast<float>(WINDOW_HEIGHT / 2) };
-    PlayerBoard playerBoard(playerPosition,playerScale,10);
+    PlayerBoard playerBoard(playerPosition,boardScale,10);
+    CPUBoard cpuBoard(cpuPosition,boardScale, 10);
+
+    Ball ball({static_cast<float>(WINDOW_WIDTH / 2), static_cast<float>(WINDOW_HEIGHT / 2)},
+              {-10,11}, 15, &playerBoard, &cpuBoard);
 
     while (!WindowShouldClose()) {
 
         drawField();
         ball.updateMovement();
         playerBoard.updatePosition();
+        cpuBoard.updatePosition();
     }
 
     CloseWindow();

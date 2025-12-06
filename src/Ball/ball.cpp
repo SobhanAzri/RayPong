@@ -1,15 +1,22 @@
 #include "Ball/ball.h"
-#include "Colors.h"
-#include "scoreSystem.h"
 
-Ball::Ball(const Vector2 &position, const Vector2 &velocity, const int &radius) {
-    initBall(position, velocity, radius);
+#include <random>
+#include "raylib.h"
+#include "scoreSystem.h"
+#include "Boards/board.h"
+#include "Boards/cpuBoard.h"
+
+Ball::Ball(const Vector2 &position, const Vector2 &velocity, const int &radius, Board *playerBoard, CPUBoard *cpuBoard) {
+    initBall(position, velocity, radius, playerBoard, cpuBoard);
 }
 
-void Ball::initBall(const Vector2 &position, const Vector2 &velocity, const int &radius) {
+void Ball::initBall(const Vector2 &position, const Vector2 &velocity, const int &radius, Board *playerBoard, CPUBoard *cpuBoard) {
     setPosition(position);
     setVelocity(velocity);
     setRadius(radius);
+
+    this->playerBoard = playerBoard;
+    this->cpuBoard = cpuBoard;
 
     scoreSystem = new ScoreSystem();
 }
@@ -26,7 +33,19 @@ void Ball::hitSurface() {
         velocity.y *= -1;
     }
 
+    if (CheckCollisionCircleRec(position,radius,cpuBoard->getMainBody()))
+        velocity.x *= -1;
+    else if (CheckCollisionCircleRec(position,radius,playerBoard->getMainBody()))
+        velocity.x *= -1;
 
+    // if (position.x + radius == cpuBoard->getMainBody().x - cpuBoard->getMainBody().width) {
+    //     if (position.y >= cpuBoard->getMainBody().y || position.y <= cpuBoard->getMainBody().y + cpuBoard->getMainBody().height)
+    //         velocity.x *= -1;
+    // }
+    // if (position.x - radius == playerBoard->getMainBody().x + playerBoard->getMainBody().width) {
+    //     // if (position.y >= playerBoard->getMainBody().y || position.y <= playerBoard->getMainBody().y + playerBoard->getMainBody().height)
+    //          velocity.x *= -1;
+    // }
 
 }
 
@@ -44,10 +63,13 @@ void Ball::hitGoal() {
 }
 
 void Ball::updateMovement() {
-    position.x += velocity.x;
-    position.y += velocity.y;
+    setPosition({position.x + velocity.x, position.y + velocity.y});
 
     drawBall();
+
+   // if (cpuBoard->canFollowTarget())
+        cpuBoard->setTargetPosition(getPosition().y);
+
     hitSurface();
     hitGoal();
 }
@@ -55,8 +77,19 @@ void Ball::updateMovement() {
 void Ball::stopBall() {
     setVelocity({0,0});
 
+    cpuBoard->setFollowTarget(false);
+    cpuBoard->setSpeed(0);
+
     resetBall();
 }
 
 void Ball::resetBall() {
+
+    std::random_device randomGenerator;
+
+    setPosition({static_cast<float>(GetScreenWidth() / 2),static_cast<float>(GetScreenHeight() / 2)});
+    setVelocity({static_cast<float>(randomGenerator() % 10) + 10 , static_cast<float>(randomGenerator() % 10) + 10});
+
+    cpuBoard->setFollowTarget(true);
+    cpuBoard->setSpeed(cpuBoard->getBaseSpeed());
 }

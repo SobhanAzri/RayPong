@@ -4,17 +4,18 @@
 
 #include "raylib.h"
 #include "Boards/board.h"
-#include "Colors.h"
+#include "Ball/ball.h"
 
 void Board::drawBoard() {
 
-    DrawRectangleRounded(
-        Rectangle{position.x,position.y, scale.x, scale.y},
+    mainBody = Rectangle{position.x,position.y,scale.x,scale.y};
+
+        DrawRectangleRounded(
+        mainBody,
         .25f,
         0,
         BLACK
         );
-
 }
 
 void Board::limitMovement() {

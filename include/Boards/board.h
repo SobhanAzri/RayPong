@@ -14,7 +14,8 @@ public:
     Board(const Vector2 &inputPosition, const Vector2 &inputScale, const float &inputSpeed)
     : position(inputPosition),
       scale(inputScale),
-      speed(inputSpeed) {}
+      speed(inputSpeed),
+      baseSpeed(inputSpeed) { }
 
     virtual ~Board() = default;
 
@@ -22,14 +23,24 @@ public:
     virtual void updatePosition() = 0;
     virtual void limitMovement();
 
+    [[nodiscard]] inline Rectangle getMainBody() const { return mainBody; }
+    [[nodiscard]] inline Vector2 getPosition() const { return position; }
+
     inline void setMoveUp(bool canMove) { bCanMoveUp = canMove;}
     inline void setMoveDown(bool canMove) {bCanMoveDown = canMove;}
     [[nodiscard]] bool canMoveUp() const { return bCanMoveUp;}
     [[nodiscard]] bool canMoveDown() const { return bCanMoveDown;}
 
+    inline void setSpeed(const float &newSpeed) { speed = newSpeed; }
+    [[nodiscard]] inline float getSpeed() const { return speed; }
+    [[nodiscard]] inline float getBaseSpeed() const { return baseSpeed; }
+
 protected:
+    Rectangle mainBody;
+
     Vector2 position = {0,0};
     Vector2 scale = {0,0};
+    float baseSpeed = 0;
     float speed = 0;
 
     bool bCanMoveUp = true;
